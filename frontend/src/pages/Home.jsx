@@ -836,7 +836,7 @@ function Footer() {
 
               {/* LinkedIn */}
               <a
-                href="https://linkedin.com/in/your-linkedin-username"
+                href="www.linkedin.com/in/sourav-giri-aa239b284"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
@@ -847,7 +847,7 @@ function Footer() {
 
               {/* X (Twitter) */}
               <a
-                href="https://x.com/your-x-username"
+                href="https://x.com/#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
@@ -858,7 +858,7 @@ function Footer() {
 
               {/* FaGithub */}
               <a
-                href="https://Github.com/your-Github-username"
+                href="https://github.com/SouravGiri-007"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
