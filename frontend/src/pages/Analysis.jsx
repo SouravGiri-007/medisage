@@ -7,10 +7,17 @@ import ReactMarkdown from "react-markdown";
 
 const STEPS = ["Upload Report", "Patient Info", "AI Analysis", "Chat with AI"];
 
+const SAMPLES = [
+  { id: "aarav", name: "Aarav Mehta", age: 29, score: 92, grade: "Excellent", bp: "118/76", glucose: "91", desc: "Healthy individual — all markers normal" },
+  { id: "priya", name: "Priya Das", age: 41, score: 74, grade: "Needs Attention", bp: "138/88", glucose: "126", desc: "Elevated BP and glucose — pre-diabetic range" },
+  { id: "rohan", name: "Rohan Singh", age: 56, score: 63, grade: "Moderate Risk", bp: "146/92", glucose: "115", desc: "Multiple markers elevated — moderate health risk" },
+];
+
 export default function Analysis() {
   const { getToken } = useAuth();
   const [step, setStep] = useState(0);
   const [useSample, setUseSample] = useState(false);
+  const [sampleId, setSampleId] = useState(null);
   const [file, setFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [patient, setPatient] = useState({ name: "", age: "", gender: "Male" });
@@ -44,6 +51,7 @@ export default function Analysis() {
       form.append("age", patient.age || "Unknown");
       form.append("gender", patient.gender);
       form.append("use_sample", useSample ? "true" : "false");
+      if (useSample && sampleId) form.append("sample_name", sampleId);
       if (!useSample && file) form.append("file", file);
 
       const data = await api.postForm("/analysis/analyze", form, token);
@@ -109,7 +117,7 @@ export default function Analysis() {
               {["Upload PDF", "Use Sample"].map((opt) => (
                 <button
                   key={opt}
-                  onClick={() => { setUseSample(opt === "Use Sample"); setFile(null); setError(""); }}
+                  onClick={() => { setUseSample(opt === "Use Sample"); setSampleId(null); setFile(null); setError(""); }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${(opt === "Use Sample") === useSample
                       ? "bg-cyan-500 text-slate-900"
                       : "bg-slate-800 text-slate-400 hover:text-white"
@@ -121,17 +129,44 @@ export default function Analysis() {
             </div>
 
             {useSample ? (
-              <div className="bg-slate-900 border border-cyan-500/20 rounded-xl p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-2xl">📄</span>
-                  <div>
-                    <p className="text-white font-medium">Sample Blood Report</p>
-                    <p className="text-slate-400 text-xs">Pre-loaded demo report for testing</p>
-                  </div>
+              <div className="space-y-3">
+                <p className="text-slate-400 text-xs uppercase tracking-wider font-medium">Select a sample report</p>
+                <div className="grid gap-3">
+                  {SAMPLES.map((s) => {
+                    const scoreColor = s.score >= 75 ? "text-green-400" : s.score >= 50 ? "text-yellow-400" : "text-red-400";
+                    const selected = sampleId === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setSampleId(s.id)}
+                        className={`text-left w-full rounded-xl p-4 border transition-all ${
+                          selected
+                            ? "bg-cyan-500/10 border-cyan-500/40 shadow-lg shadow-cyan-500/5"
+                            : "bg-slate-900 border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/50"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold text-xs">
+                              {s.name.split(" ").map(n => n[0]).join("")}
+                            </div>
+                            <div>
+                              <p className={`text-sm font-semibold ${selected ? "text-white" : "text-slate-200"}`}>{s.name}</p>
+                              <p className="text-[11px] text-slate-500">Age {s.age} · {s.grade}</p>
+                            </div>
+                          </div>
+                          <div className={`text-lg font-black ${scoreColor}`}>{s.score}</div>
+                        </div>
+                        <p className="text-xs text-slate-400">{s.desc}</p>
+                        <div className="flex gap-3 mt-2">
+                          <span className="text-[10px] text-slate-500">BP {s.bp}</span>
+                          <span className="text-[10px] text-slate-500">Glucose {s.glucose} mg/dL</span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-                <p className="text-slate-500 text-xs">
-                  This sample contains CBC, Lipid Profile, Metabolic Panel, LFT, Thyroid, and Vitamins data.
-                </p>
               </div>
             ) : (
               <div
@@ -164,7 +199,7 @@ export default function Analysis() {
             {error && <p className="text-red-400 text-sm">{error}</p>}
 
             <button
-              onClick={() => { if (!useSample && !file) return setError("Please upload a PDF."); setStep(1); }}
+              onClick={() => { if (useSample && !sampleId) return setError("Please select a sample report."); if (!useSample && !file) return setError("Please upload a PDF."); setStep(1); }}
               className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors"
             >
               Continue →

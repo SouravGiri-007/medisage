@@ -1,0 +1,28 @@
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+cd backend && pip install -r requirements.txt
+
+Create a virtual environment named .venv:
+python -m venv .venv
+
+or
+
+py -m venv .venv
+Activate the virtual environment:
+
+Command Prompt (CMD):
+
+.venv\Scripts\activate
+
+PowerShell:
+
+.venv\Scripts\Activate.ps1
+
+If PowerShell shows an execution policy error, run:
+
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+Then try activating again.
+
+After activation, you'll see something like:
+(.venv) C:\Projects\MyApp>

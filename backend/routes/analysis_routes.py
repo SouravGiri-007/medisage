@@ -28,7 +28,8 @@ def analyze():
 
     if use_sample:
         from config.sample_data import extract_sample_report
-        report_text = extract_sample_report()
+        sample_name = data.get("sample_name", "random")
+        report_text = extract_sample_report(sample_name)
     elif file:
         is_valid, error = validate_pdf_file(file)
         if not is_valid:
