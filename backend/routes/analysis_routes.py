@@ -27,8 +27,8 @@ def analyze():
     gender = data.get("gender", "Unknown")
 
     if use_sample:
-        from config.sample_data import SAMPLE_REPORT
-        report_text = SAMPLE_REPORT
+        from config.sample_data import extract_sample_report
+        report_text = extract_sample_report()
     elif file:
         is_valid, error = validate_pdf_file(file)
         if not is_valid:

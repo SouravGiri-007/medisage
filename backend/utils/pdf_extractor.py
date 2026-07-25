@@ -1,13 +1,18 @@
 import pdfplumber
 import io
+import os
 
 MAX_PDF_PAGES = 20
 MAX_UPLOAD_SIZE_MB = 20
 
 def extract_text_from_pdf(file) -> str:
-    """Extract text from a PDF file object."""
+    """Extract text from a PDF file object or file path."""
     try:
-        content = file.read()
+        if isinstance(file, str):
+            with open(file, "rb") as f:
+                content = f.read()
+        else:
+            content = file.read()
         with pdfplumber.open(io.BytesIO(content)) as pdf:
             if len(pdf.pages) > MAX_PDF_PAGES:
                 return f"Error: PDF exceeds {MAX_PDF_PAGES} page limit"
