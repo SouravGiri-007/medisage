@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Environment files
+.env
+backend/.env
+frontend/.env
+
+# Secrets
+api.txt
+backend/serviceAccountKey.json
+*.key
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+backend/server.log
+
+# Vector stores (FAISS)
+faiss_index/
+*.faiss
