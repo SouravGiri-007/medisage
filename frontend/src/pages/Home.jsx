@@ -6,9 +6,9 @@ import {
   ChevronDown, Star, Heart, Droplets, Wind, Thermometer,
   LineChart, Database, Zap, TrendingUp, Users, CheckCircle,
   Menu, X, ExternalLink, Mail, Clock, FileText, BarChart3,
-  Search, Lock, Smartphone, AlertTriangle
+  Search, Lock, Smartphone, AlertTriangle,
 } from "lucide-react";
-
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 // ─── Reusable ──────────────────────────────────────────────────────────
 
 function FadeIn({ children, delay = 0, className = "" }) {
@@ -207,17 +207,59 @@ function Hero() {
               {/* Score + key metrics */}
               <div className="grid grid-cols-[1fr_1fr] gap-4">
                 <div className="bg-slate-800/50 rounded-xl p-4 flex flex-col items-center">
-                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
-                    <motion.circle cx="50" cy="50" r="42" fill="none" stroke="#22D3EE" strokeWidth="6" strokeLinecap="round"
-                      strokeDasharray={264} initial={{ strokeDashoffset: 264 }} animate={{ strokeDashoffset: 264 * 0.28 }}
-                      transition={{ duration: 1.5, delay: 0.8 }} />
-                  </svg>
-                  <div className="absolute mt-[-5.5rem] flex flex-col items-center">
-                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }} className="text-2xl font-bold text-white">72</motion.span>
-                    <span className="text-xs text-slate-500">Score</span>
-                    <span className="text-xs text-cyan-400 font-medium">Grade B</span>
-                  </div>
+
+<div className="bg-slate-800/50 rounded-xl p-4 flex items-center justify-center">
+  <div className="relative w-40 h-40">
+
+    <svg
+      className="w-full h-full -rotate-90"
+      viewBox="0 0 100 100"
+    >
+      <circle
+        cx="50"
+        cy="50"
+        r="42"
+        fill="none"
+        stroke="rgba(255,255,255,0.08)"
+        strokeWidth="6"
+      />
+
+      <motion.circle
+        cx="50"
+        cy="50"
+        r="42"
+        fill="none"
+        stroke="#22D3EE"
+        strokeWidth="6"
+        strokeLinecap="round"
+        strokeDasharray={264}
+        initial={{ strokeDashoffset: 264 }}
+        animate={{ strokeDashoffset: 264 * 0.28 }}
+        transition={{ duration: 1.5, delay: 0.8 }}
+      />
+    </svg>
+
+    <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="text-4xl font-bold text-white"
+      >
+        72
+      </motion.span>
+
+      <span className="text-sm text-slate-400">
+        Score
+      </span>
+
+      <span className="text-sm text-cyan-400 font-semibold">
+        Grade B
+      </span>
+    </div>
+
+  </div>
+</div>
                 </div>
                 <div className="space-y-2">
                   {[
@@ -782,12 +824,49 @@ function Footer() {
           <div>
             <h4 className="text-sm font-semibold text-white mb-3">Connect</h4>
             <div className="flex items-center gap-3">
-              <a href="https://github.com/SouravGiri-007" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all">
-                <ExternalLink size={16} />
-              </a>
-              <a href="souravgiri.dev@gmail.com" className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all">
+            <div className="flex items-center gap-3">
+              {/* Email */}
+              <a
+                href="mailto:souravgiri.dev@gmail.com"
+                className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
+                aria-label="Email"
+              >
                 <Mail size={16} />
               </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://linkedin.com/in/your-linkedin-username"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
+                aria-label="FaLinkedin"
+              >
+                <FaLinkedin size={16} />
+              </a>
+
+              {/* X (Twitter) */}
+              <a
+                href="https://x.com/your-x-username"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
+                aria-label="X"
+              >
+                <FaTwitter size={16} />
+              </a>
+
+              {/* FaGithub */}
+              <a
+                href="https://Github.com/your-Github-username"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
+                aria-label="FaGithub"
+              >
+                <FaGithub size={16} />
+              </a>
+            </div>
             </div>
           </div>
         </div>
