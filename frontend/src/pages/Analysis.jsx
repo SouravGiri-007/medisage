@@ -76,12 +76,6 @@ export default function Analysis() {
     return "text-red-400";
   };
 
-  const scoreBg = (score) => {
-    if (score >= 75) return "bg-green-500/10 border-green-500/30";
-    if (score >= 50) return "bg-yellow-500/10 border-yellow-500/30";
-    return "bg-red-500/10 border-red-500/30";
-  };
-
   return (
     <Layout>
       <div className="p-8 max-w-4xl mx-auto">
@@ -247,31 +241,87 @@ export default function Analysis() {
         {/* ── Step 2: Results ── */}
         {step === 2 && result && (
           <div className="space-y-6">
-            {/* Health Score Card */}
+            {/* Health Report Card */}
             {result.health_score && (
-              <div className={`border rounded-xl p-5 flex items-center gap-5 ${scoreBg(result.health_score.score)}`}>
-                <div className="text-center">
-                  <div className={`text-4xl font-black ${scoreColor(result.health_score.score)}`}>
+              <div className="bg-[#111827] border border-slate-800 rounded-[18px] p-6 flex flex-col gap-5">
+                {/* Header Row */}
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
+                      {result.health_score.score >= 70 ? "A" : result.health_score.score >= 50 ? "B" : "C"}
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold text-base">Health Report</h3>
+                      <p className="text-slate-400 text-xs">AI Analysis Complete</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span className="text-[11px] text-emerald-400 font-medium">Verified</span>
+                  </div>
+                </div>
+
+                {/* Score Section */}
+                <div className="flex flex-col items-center py-2">
+                  <div className={`text-5xl font-black tracking-tight ${scoreColor(result.health_score.score)}`}>
                     {result.health_score.score}
                   </div>
-                  <div className={`text-xs font-bold ${scoreColor(result.health_score.score)}`}>
+                  <div className="text-slate-400 text-sm mt-1">Health Score</div>
+                  <div className={`text-xs font-bold mt-0.5 ${scoreColor(result.health_score.score)}`}>
                     Grade {result.health_score.grade}
                   </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-white font-medium text-sm">{result.health_score.summary}</p>
-                  {result.health_score.risk_areas?.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {result.health_score.risk_areas.map(r => (
-                        <span key={r} className="text-xs bg-white/10 text-slate-300 px-2 py-0.5 rounded-full">{r}</span>
-                      ))}
+
+                {/* Progress Ring */}
+                <div className="flex justify-center">
+                  <div className="relative w-20 h-20">
+                    <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+                      <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
+                      <circle
+                        cx="40" cy="40" r="34" fill="none"
+                        stroke={result.health_score.score >= 75 ? "#22D3EE" : result.health_score.score >= 50 ? "#F59E0B" : "#EF4444"}
+                        strokeWidth="4" strokeLinecap="round"
+                        strokeDasharray={`${Math.min(result.health_score.score, 100) * 2.136} 213.6`}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className={`text-xs font-bold ${scoreColor(result.health_score.score)}`}>
+                        {result.health_score.score}%
+                      </span>
                     </div>
-                  )}
+                  </div>
                 </div>
-                <div className="text-xs text-slate-400">
-                  Model: <span className="text-slate-300">{result.model_used?.split("/").pop()}</span>
-                  <br />
-                  Uses: <span className="text-slate-300">{result.analyses_used}/{result.analyses_limit}</span>
+
+                {/* Summary */}
+                {result.health_score.summary && (
+                  <p className="text-slate-300 text-sm text-center">{result.health_score.summary}</p>
+                )}
+
+                {/* Risk Areas */}
+                {result.health_score.risk_areas?.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {result.health_score.risk_areas.map(r => {
+                      const isHigh = r.toLowerCase().includes("high") || r.toLowerCase().includes("risk") || r.toLowerCase().includes("elevated");
+                      return (
+                        <div key={r} className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between border border-white/[0.06]">
+                          <span className="text-slate-300 text-xs">{r}</span>
+                          <span className={`text-[11px] font-medium ${isHigh ? "text-red-400" : "text-emerald-400"}`}>
+                            {isHigh ? "Monitor" : "Normal"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-1 border-t border-white/5">
+                  <div className="text-xs text-slate-500">
+                    Model: <span className="text-slate-400">{result.model_used?.split("/").pop()}</span>
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Uses: <span className="text-slate-400">{result.analyses_used}/{result.analyses_limit}</span>
+                  </div>
                 </div>
               </div>
             )}

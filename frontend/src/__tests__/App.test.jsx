@@ -28,9 +28,9 @@ describe("Login page", () => {
     vi.clearAllMocks();
   });
 
-  it("renders sign in heading", async () => {
+  it("renders welcome back heading", async () => {
     renderWithProviders(<Login />);
-    expect(await screen.findByRole("heading", { name: /sign in/i })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /welcome back/i })).toBeInTheDocument();
   });
 });
 
