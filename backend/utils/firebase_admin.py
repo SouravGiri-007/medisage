@@ -2,14 +2,33 @@ import firebase_admin
 from firebase_admin import credentials, firestore, auth
 from datetime import datetime, timedelta, timezone
 import os
+import logging
 from flask import request as flask_request
 
-# Initialize Firebase Admin
-if not firebase_admin._apps:
-    cred = credentials.Certificate(os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH", "serviceAccountKey.json"))
-    firebase_admin.initialize_app(cred)
+logger = logging.getLogger(__name__)
 
-db = firestore.client()
+_firebase_db = None
+
+def _init_firebase():
+    global _firebase_db
+    if _firebase_db is not None:
+        return _firebase_db
+    try:
+        path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH", "serviceAccountKey.json")
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(path)
+            firebase_admin.initialize_app(cred)
+        _firebase_db = firestore.client()
+    except Exception as e:
+        logger.warning(f"Firebase init failed: {e}")
+        _firebase_db = None
+    return _firebase_db
+
+def get_db():
+    db = _init_firebase()
+    if db is None:
+        raise RuntimeError("Firebase not initialized")
+    return db
 
 # ─── Auth ────────────────────────────────────────────────────────────────────
 
@@ -29,25 +48,17 @@ def verify_token(req):
 # ─── User Profile ─────────────────────────────────────────────────────────────
 
 def _utcnow():
-    """Return a timezone-aware UTC datetime (replaces deprecated datetime.utcnow())."""
     return datetime.now(timezone.utc)
 
 
 def _make_naive(dt):
-    """
-    Convert any datetime to a naive UTC datetime.
-    Firestore returns timezone-aware datetimes (with tzinfo), but we compare
-    against datetime.utcnow() which is naive. To avoid:
-      TypeError: can't subtract offset-naive and offset-aware datetimes
-    we normalize everything to naive UTC before arithmetic.
-    """
     if dt.tzinfo is not None:
         return dt.astimezone(timezone.utc).replace(tzinfo=None)
     return dt
 
 
 def create_user_profile(uid, name, email):
-    doc_ref = db.collection("users").document(uid)
+    doc_ref = get_db().collection("users").document(uid)
     doc = doc_ref.get()
     if not doc.exists:
         doc_ref.set({
@@ -61,7 +72,7 @@ def create_user_profile(uid, name, email):
 
 
 def get_user_profile(uid):
-    doc = db.collection("users").document(uid).get()
+    doc = get_db().collection("users").document(uid).get()
     if doc.exists:
         data = doc.to_dict()
         data["uid"] = uid
@@ -73,7 +84,7 @@ def get_user_profile(uid):
 
 def get_user_analysis_count(uid):
     """Returns (count, limit, reset_in_str)."""
-    doc_ref = db.collection("users").document(uid)
+    doc_ref = get_db().collection("users").document(uid)
     doc = doc_ref.get()
     if not doc.exists:
         return 0, 15, "24h"
@@ -83,8 +94,6 @@ def get_user_analysis_count(uid):
     count = data.get("analysis_count", 0)
     limit = data.get("analysis_limit", 15)
 
-    # Normalize both datetimes to naive UTC before subtraction to avoid
-    # "can't subtract offset-naive and offset-aware datetimes" TypeError.
     now_naive = _make_naive(_utcnow())
     last_reset_naive = _make_naive(last_reset) if isinstance(last_reset, datetime) else now_naive
 
@@ -102,9 +111,7 @@ def get_user_analysis_count(uid):
 
 
 def increment_analysis_count(uid):
-    doc_ref = db.collection("users").document(uid)
-    # Fix: firebase_admin.firestore has no INCREMENT attribute.
-    # Read current count and update atomically instead.
+    doc_ref = get_db().collection("users").document(uid)
     doc = doc_ref.get()
     if doc.exists:
         current = doc.to_dict().get("analysis_count", 0)
@@ -116,7 +123,7 @@ def increment_analysis_count(uid):
 # ─── Analysis History ─────────────────────────────────────────────────────────
 
 def save_analysis(uid, patient_name, age, gender, report_text, analysis_text, model_used, health_score=None):
-    db.collection("users").document(uid).collection("analyses").add({
+    get_db().collection("users").document(uid).collection("analyses").add({
         "patient_name": patient_name,
         "age": age,
         "gender": gender,
@@ -130,7 +137,7 @@ def save_analysis(uid, patient_name, age, gender, report_text, analysis_text, mo
 
 def get_analysis_history(uid, limit=10):
     docs = (
-        db.collection("users").document(uid).collection("analyses")
+        get_db().collection("users").document(uid).collection("analyses")
         .order_by("created_at", direction=firestore.Query.DESCENDING)
         .limit(limit)
         .stream()
@@ -148,7 +155,7 @@ def get_analysis_history(uid, limit=10):
 # ─── Chat Sessions ────────────────────────────────────────────────────────────
 
 def save_chat_message(uid, session_id, role, content):
-    db.collection("users").document(uid)\
+    get_db().collection("users").document(uid)\
       .collection("sessions").document(session_id)\
       .collection("messages").add({
           "role": role,
@@ -159,7 +166,7 @@ def save_chat_message(uid, session_id, role, content):
 
 def get_chat_history(uid, session_id, limit=50):
     docs = (
-        db.collection("users").document(uid)
+        get_db().collection("users").document(uid)
         .collection("sessions").document(session_id)
         .collection("messages")
         .order_by("timestamp")
@@ -176,7 +183,7 @@ def get_chat_history(uid, session_id, limit=50):
 
 
 def delete_session(uid, session_id):
-    session_ref = db.collection("users").document(uid)\
+    session_ref = get_db().collection("users").document(uid)\
                     .collection("sessions").document(session_id)
     messages = session_ref.collection("messages").stream()
     for msg in messages:
