@@ -39,6 +39,10 @@ def verify_token(req):
         return None, "Missing or invalid Authorization header"
     token = auth_header.split("Bearer ")[1]
     try:
+        _init_firebase()
+    except Exception as e:
+        return None, f"Firebase not configured: {str(e)}"
+    try:
         decoded = auth.verify_id_token(token)
         return decoded["uid"], None
     except Exception as e:
