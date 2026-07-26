@@ -6,7 +6,6 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Analysis from "./pages/Analysis";
 import History from "./pages/History";
-import Trends from "./pages/Trends";
 
 // Move route guards OUTSIDE App to prevent re-creation on every render.
 // Defining them inside App caused the entire page component (e.g. Signup)
@@ -40,7 +39,6 @@ export default function App() {
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/analysis" element={<ProtectedRoute><Analysis /></ProtectedRoute>} />
           <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-          <Route path="/trends" element={<ProtectedRoute><Trends /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

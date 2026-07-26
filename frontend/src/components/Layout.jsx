@@ -6,7 +6,6 @@ const NAV = [
   { to: "/dashboard", icon: "⚡", label: "Dashboard" },
   { to: "/analysis",  icon: "🔬", label: "New Analysis" },
   { to: "/history",   icon: "📋", label: "History" },
-  { to: "/trends",    icon: "📈", label: "Health Trends" },
 ];
 
 export default function Layout({ children }) {

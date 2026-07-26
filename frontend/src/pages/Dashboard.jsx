@@ -90,17 +90,6 @@ export default function Dashboard() {
               Start now →
             </span>
           </Link>
-          <Link
-            to="/trends"
-            className="group bg-gradient-to-br from-purple-500/10 to-pink-600/10 border border-purple-500/20 hover:border-purple-500/40 rounded-xl p-6 transition-all duration-200"
-          >
-            <div className="text-3xl mb-3">📈</div>
-            <h3 className="text-white font-semibold mb-1">Health Trends</h3>
-            <p className="text-slate-400 text-sm">Track how your health markers change over time</p>
-            <span className="text-purple-400 text-xs mt-3 block group-hover:translate-x-1 transition-transform">
-              View trends →
-            </span>
-          </Link>
         </div>
 
         {/* Recent analyses */}

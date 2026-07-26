@@ -24,7 +24,6 @@
 |---|---|
 | 🔬 **AI Report Analysis** | Upload PDF blood reports and receive detailed AI-generated insights with parameter tables, risk assessment, and recommendations |
 | 💬 **RAG Chat** | Chat with your report using Retrieval-Augmented Generation (FAISS vector store) — ask questions and get context-aware answers |
-| 📈 **Health Trends** | Track key health markers (HbA1c, LDL, Glucose, etc.) over time with interactive Recharts line charts |
 | 🏆 **Health Score** | AI-generated health score (0–100) with letter grade, risk areas breakdown, and circular progress visualization |
 | 🔄 **4-Tier Model Fallback** | Llama 4 Scout → Llama 3.3 70B → Llama 3.1 8B → fallback response — never fails due to rate limits |
 | 🔒 **Firebase Authentication** | Secure email/password signup/login with auto-profile creation on backend |
@@ -204,7 +203,6 @@ All endpoints except `/_health` require a Firebase ID token in the `Authorizatio
 | `GET` | `/analysis/history` | List past analyses | ✅ |
 | `GET` | `/analysis/rate-limit` | Check daily usage | ✅ |
 | `POST` | `/health/score` | Get health score from analysis text | ✅ |
-| `POST` | `/health/trends` | Extract health markers | ✅ |
 | `POST` | `/chat/session` | Create chat session | ✅ |
 | `POST` | `/chat/session/<id>/message` | Send chat message | ✅ |
 | `GET` | `/chat/session/<id>/messages` | Load chat history | ✅ |
