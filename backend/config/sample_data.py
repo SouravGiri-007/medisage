@@ -3,32 +3,33 @@ import os
 SAMPLE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "samples")
 
 SAMPLES = {
-    "aarav": {
-        "file": "Aarav_Mehta_Health_Report.pdf",
-        "name": "Aarav Mehta",
-        "age": 29,
-        "score": 92,
-        "grade": "Excellent",
-        "bp": "118/76",
-        "glucose": "91",
+    "ananya": {
+        "file": "Demo_Lab_Report1.pdf",
+        "name": "Ananya Sharma",
+        "age": 34,
+        "gender": "Female",
+        "desc": "Multiple markers elevated — cholesterol, glucose, HbA1c, TSH, low hemoglobin",
     },
-    "priya": {
-        "file": "Priya_Das_Health_Report.pdf",
-        "name": "Priya Das",
-        "age": 41,
-        "score": 74,
-        "grade": "Needs Attention",
-        "bp": "138/88",
-        "glucose": "126",
+    "rohan_m": {
+        "file": "Demo_Lab_Report_2_RohanMehta.pdf",
+        "name": "Rohan Mehta",
+        "age": 58,
+        "gender": "Male",
+        "desc": "Diabetic profile — high glucose, HbA1c 8.4%, elevated BP, kidney stress markers",
     },
-    "rohan": {
-        "file": "Rohan_Singh_Health_Report.pdf",
-        "name": "Rohan Singh",
-        "age": 56,
-        "score": 63,
-        "grade": "Moderate Risk",
-        "bp": "146/92",
-        "glucose": "115",
+    "ishita": {
+        "file": "Demo_Lab_Report_3_IshitaBanerjee.pdf",
+        "name": "Ishita Banerjee",
+        "age": 27,
+        "gender": "Female",
+        "desc": "Anemia & iron deficiency — low Hb, ferritin, thyroid panel abnormal",
+    },
+    "arjun": {
+        "file": "Demo_Lab_Report_4_ArjunDeshmukh.pdf",
+        "name": "Arjun Deshmukh",
+        "age": 19,
+        "gender": "Male",
+        "desc": "Healthy individual — all markers within normal range",
     },
 }
 

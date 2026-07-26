@@ -8,9 +8,10 @@ import ReactMarkdown from "react-markdown";
 const STEPS = ["Upload Report", "Patient Info", "AI Analysis", "Chat with AI"];
 
 const SAMPLES = [
-  { id: "aarav", name: "Aarav Mehta", age: 29, score: 92, grade: "Excellent", bp: "118/76", glucose: "91", desc: "Healthy individual — all markers normal" },
-  { id: "priya", name: "Priya Das", age: 41, score: 74, grade: "Needs Attention", bp: "138/88", glucose: "126", desc: "Elevated BP and glucose — pre-diabetic range" },
-  { id: "rohan", name: "Rohan Singh", age: 56, score: 63, grade: "Moderate Risk", bp: "146/92", glucose: "115", desc: "Multiple markers elevated — moderate health risk" },
+  { id: "ananya", name: "Ananya Sharma", age: 34, gender: "Female", desc: "Multiple markers elevated — cholesterol, glucose, HbA1c, TSH, low hemoglobin" },
+  { id: "rohan_m", name: "Rohan Mehta", age: 58, gender: "Male", desc: "Diabetic profile — high glucose, HbA1c 8.4%, elevated BP, kidney stress" },
+  { id: "ishita", name: "Ishita Banerjee", age: 27, gender: "Female", desc: "Anemia & iron deficiency — low Hb, ferritin, thyroid panel abnormal" },
+  { id: "arjun", name: "Arjun Deshmukh", age: 19, gender: "Male", desc: "Healthy individual — all markers within normal range" },
 ];
 
 export default function Analysis() {
@@ -133,7 +134,6 @@ export default function Analysis() {
                 <p className="text-slate-400 text-xs uppercase tracking-wider font-medium">Select a sample report</p>
                 <div className="grid gap-3">
                   {SAMPLES.map((s) => {
-                    const scoreColor = s.score >= 75 ? "text-green-400" : s.score >= 50 ? "text-yellow-400" : "text-red-400";
                     const selected = sampleId === s.id;
                     return (
                       <button
@@ -146,23 +146,16 @@ export default function Analysis() {
                             : "bg-slate-900 border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/50"
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold text-xs">
-                              {s.name.split(" ").map(n => n[0]).join("")}
-                            </div>
-                            <div>
-                              <p className={`text-sm font-semibold ${selected ? "text-white" : "text-slate-200"}`}>{s.name}</p>
-                              <p className="text-[11px] text-slate-500">Age {s.age} · {s.grade}</p>
-                            </div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                            {s.name.split(" ").map(n => n[0]).join("")}
                           </div>
-                          <div className={`text-lg font-black ${scoreColor}`}>{s.score}</div>
+                          <div className="min-w-0">
+                            <p className={`text-sm font-semibold truncate ${selected ? "text-white" : "text-slate-200"}`}>{s.name}</p>
+                            <p className="text-[11px] text-slate-500">Age {s.age} · {s.gender}</p>
+                          </div>
                         </div>
-                        <p className="text-xs text-slate-400">{s.desc}</p>
-                        <div className="flex gap-3 mt-2">
-                          <span className="text-[10px] text-slate-500">BP {s.bp}</span>
-                          <span className="text-[10px] text-slate-500">Glucose {s.glucose} mg/dL</span>
-                        </div>
+                        <p className="text-xs text-slate-400 leading-relaxed">{s.desc}</p>
                       </button>
                     );
                   })}
