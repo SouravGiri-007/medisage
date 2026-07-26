@@ -14,9 +14,13 @@ def _init_firebase():
     if _firebase_db is not None:
         return _firebase_db
     try:
-        path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH", "serviceAccountKey.json")
+        raw = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH", "serviceAccountKey.json")
         if not firebase_admin._apps:
-            cred = credentials.Certificate(path)
+            if raw.startswith("{"):
+                import json
+                cred = credentials.Certificate(json.loads(raw))
+            else:
+                cred = credentials.Certificate(raw)
             firebase_admin.initialize_app(cred)
         _firebase_db = firestore.client()
     except Exception as e:
