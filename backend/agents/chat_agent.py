@@ -1,8 +1,40 @@
 import os
+import re
 from groq import Groq
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_community.vectorstores import FAISS
+
+MEDICAL_KEYWORDS = [
+    "blood", "health", "report", "test", "lab", "result", "level", "value",
+    "normal", "high", "low", "range", "risk", "symptom", "diagnosis",
+    "treatment", "medication", "doctor", "disease", "condition", "infection",
+    "pain", "fever", "pressure", "cholesterol", "glucose", "sugar",
+    "hemoglobin", "diabetes", "thyroid", "liver", "kidney", "heart",
+    "vitamin", "mineral", "iron", "calcium", "weight", "diet", "exercise",
+    "sleep", "anxiety", "depression", "stress", "therapy", "surgery",
+    "vaccine", "immunity", "antibody", "cell", "protein", "enzyme",
+    "hormone", "lipid", "metabolism", "nutrition", "calorie", "obesity",
+    "bp", "bmi", "hba1c", "ldl", "hdl", "wbc", "rbc", "crp", "alt", "ast",
+    "tsh", "mcv", "mch", "creatinine", "bilirubin", "platelet",
+    "prescription", "dose", "injection", "tablet", "capsule", "syrup",
+    "allergy", "asthma", "arthritis", "cancer", "tumor", "fracture",
+    "wound", "rash", "swelling", "inflammation", "chronic", "acute",
+    "prevent", "screen", "checkup", "annual", "fasting", "urine", "stool",
+    "scan", "xray", "x-ray", "ultrasound", "mri", "ct scan", "ekg", "ecg",
+    "analyze", "reading", "marker", "trend", "change", "improve", "worsen",
+    "advice", "recommend", "suggest", "should", "concern", "question",
+    "booster", "shot", "needle", "syringe", "immunization", "antibiotic",
+]
+
+MEDICAL_PATTERNS = [
+    r"\bwhat.*(?:mean|indicate|show|tell)\b",
+    r"\bwhy.*(?:high|low|abnormal|elevated)\b",
+    r"\bhow.*(?:improve|reduce|lower|increase|treat|prevent)\b",
+    r"\b(?:is it|am i|should i|can i|do i|does it)\b.*(?:normal|healthy|risk|concern|need|okay|fine)",
+    r"\bexplain.*(?:result|report|value|level)\b",
+]
+
 
 class ChatAgent:
     def __init__(self):
@@ -12,12 +44,31 @@ class ChatAgent:
         self.client = Groq(api_key=api_key) if api_key else None
         self.model = "llama-3.3-70b-versatile"
 
+    def _is_medical_query(self, query: str) -> bool:
+        lower = query.lower().strip()
+        if len(lower) < 3:
+            return False
+        words = set(re.findall(r"[a-z]+", lower))
+        keyword_matches = words & set(MEDICAL_KEYWORDS)
+        if len(keyword_matches) >= 2:
+            return True
+        if any(re.search(p, lower) for p in MEDICAL_PATTERNS):
+            return True
+        return False
+
     def initialize_vector_store(self, text: str):
         texts = self.splitter.split_text(text) or [text]
         return FAISS.from_texts(texts, self.embeddings)
 
     def get_response(self, query: str, vectorstore=None, chat_history=None) -> str:
         chat_history = chat_history or []
+
+        if not self._is_medical_query(query):
+            return (
+                "I'm MediSage, a specialized AI medical assistant. "
+                "I can only answer questions related to health, medical reports, "
+                "lab results, symptoms, and wellness. Please ask a health-related question."
+            )
 
         ctx_query = self._contextualize(query, chat_history)
 
